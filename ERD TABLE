@@ -1,5 +1,5 @@
 BEGIN;
-	-- TABLES
+-- TABLES
 
 -- Authors Table
 CREATE TABLE IF NOT EXISTS public.author
@@ -187,8 +187,4 @@ FROM public.useraccount ua
 JOIN public.review r ON ua.userid = r.userid
 JOIN public.book b ON r.bookid = b.bookid;
 
--- FOREIGN KEYS
--- Foreign keys have already been defined within the table creation statements
-
--- END
 END;
