@@ -1,267 +1,194 @@
 BEGIN;
+	-- TABLES
 
-
+-- Authors Table
 CREATE TABLE IF NOT EXISTS public.author
 (
-    authorid integer NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default",
-    yearborn integer,
-    yeardied integer,
-    CONSTRAINT author_pkey PRIMARY KEY (authorid)
+    authorid INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    yearborn INTEGER NOT NULL,
+    yeardied INTEGER,
+    CONSTRAINT chk_yearborn CHECK (yearborn >= 0)
 );
 
-CREATE TABLE IF NOT EXISTS public.authorbook
-(
-    authorbookid integer NOT NULL,
-    authorid integer,
-    bookid integer,
-    CONSTRAINT authorbook_pkey PRIMARY KEY (authorbookid)
-);
-
-CREATE TABLE IF NOT EXISTS public.book
-(
-    bookid integer NOT NULL,
-    title character varying(100) COLLATE pg_catalog."default",
-    publicationyear integer,
-    pages integer,
-    publisherid integer,
-    CONSTRAINT book_pkey PRIMARY KEY (bookid)
-);
-
-CREATE TABLE IF NOT EXISTS public.bookcategory
-(
-    bookcategoryid integer NOT NULL,
-    bookid integer,
-    categoryid integer,
-    CONSTRAINT bookcategory_pkey PRIMARY KEY (bookcategoryid)
-);
-
-CREATE TABLE IF NOT EXISTS public.bought
-(
-    boughtid integer NOT NULL,
-    customerid integer,
-    bookid integer,
-    date date,
-    price numeric(10, 2),
-    quantity integer,
-    CONSTRAINT bought_pkey PRIMARY KEY (boughtid)
-);
-
-CREATE TABLE IF NOT EXISTS public.category
-(
-    categoryid integer NOT NULL,
-    categoryname character varying(100) COLLATE pg_catalog."default",
-    CONSTRAINT category_pkey PRIMARY KEY (categoryid)
-);
-
-CREATE TABLE IF NOT EXISTS public.customer
-(
-    customerid integer NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default",
-    street character varying(100) COLLATE pg_catalog."default",
-    city character varying(100) COLLATE pg_catalog."default",
-    state character varying(100) COLLATE pg_catalog."default",
-    country character varying(100) COLLATE pg_catalog."default",
-    email character varying(100) COLLATE pg_catalog."default",
-    passwordhash character varying(255) COLLATE pg_catalog."default",
-    CONSTRAINT customer_pkey PRIMARY KEY (customerid)
-);
-
-CREATE TABLE IF NOT EXISTS public.orderhistory
-(
-    orderhistoryid integer NOT NULL,
-    userid integer,
-    bookid integer,
-    orderdate date,
-    status character varying(50) COLLATE pg_catalog."default",
-    CONSTRAINT orderhistory_pkey PRIMARY KEY (orderhistoryid)
-);
-
-CREATE TABLE IF NOT EXISTS public.paymentmethod
-(
-    paymentmethodid integer NOT NULL,
-    userid integer,
-    methodtype character varying(50) COLLATE pg_catalog."default",
-    provider character varying(50) COLLATE pg_catalog."default",
-    accountnumber character varying(50) COLLATE pg_catalog."default",
-    expirydate date,
-    CONSTRAINT paymentmethod_pkey PRIMARY KEY (paymentmethodid)
-);
-
+-- Publishers Table
 CREATE TABLE IF NOT EXISTS public.publisher
 (
-    publisherid integer NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default",
-    city character varying(100) COLLATE pg_catalog."default",
-    country character varying(100) COLLATE pg_catalog."default",
-    telephone character varying(20) COLLATE pg_catalog."default",
-    yearfounded integer,
-    CONSTRAINT publisher_pkey PRIMARY KEY (publisherid)
+    publisherid INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    telephone VARCHAR(20),
+    yearfounded INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.review
+-- Books Table
+CREATE TABLE IF NOT EXISTS public.book
 (
-    reviewid integer NOT NULL,
-    bookid integer,
-    userid integer,
-    rating integer,
-    comment text COLLATE pg_catalog."default",
-    date date,
-    CONSTRAINT review_pkey PRIMARY KEY (reviewid)
+    bookid INTEGER PRIMARY KEY,
+    title VARCHAR(100) NOT NULL, 	
+    publicationyear INTEGER NOT NULL,
+    pages INTEGER NOT NULL,
+    publisherid INTEGER REFERENCES public.publisher(publisherid) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.stock
+
+-- Book Categories Table
+CREATE TABLE IF NOT EXISTS public.category
 (
-    stockid integer NOT NULL,
-    bookid integer,
-    quantityavailable integer,
-    CONSTRAINT stock_pkey PRIMARY KEY (stockid)
+    categoryid INTEGER PRIMARY KEY,
+    categoryname VARCHAR(100) NOT NULL
 );
 
+-- Author-Book Relationships Table
+CREATE TABLE IF NOT EXISTS public.authorbook
+(
+    authorbookid INTEGER PRIMARY KEY,
+    authorid INTEGER REFERENCES public.author(authorid) NOT NULL,
+    bookid INTEGER REFERENCES public.book(bookid) NOT NULL
+);
+
+-- Book-Category Relationships Table
+CREATE TABLE IF NOT EXISTS public.bookcategory
+(
+    bookcategoryid INTEGER PRIMARY KEY,
+    bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
+    categoryid INTEGER REFERENCES public.category(categoryid) NOT NULL
+);
+
+-- Customers Table
+CREATE TABLE IF NOT EXISTS public.customer
+(
+    customerid INTEGER PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    street VARCHAR(100),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    country VARCHAR(100),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    passwordhash VARCHAR(255) NOT NULL
+);
+
+-- User Accounts Table
 CREATE TABLE IF NOT EXISTS public.useraccount
 (
-    userid integer NOT NULL,
-    customerid integer,
-    username character varying(50) COLLATE pg_catalog."default",
-    email character varying(100) COLLATE pg_catalog."default",
-    passwordhash character varying(255) COLLATE pg_catalog."default",
-    CONSTRAINT useraccount_pkey PRIMARY KEY (userid)
+    userid INTEGER PRIMARY KEY,
+    customerid INTEGER REFERENCES public.customer(customerid) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    passwordhash VARCHAR(255) NOT NULL
 );
 
+-- Reviews Table
+CREATE TABLE IF NOT EXISTS public.review
+(
+    reviewid INTEGER PRIMARY KEY,
+    bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
+    userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
+    rating INTEGER NOT NULL,
+    comment TEXT,
+    date DATE NOT NULL
+);
+
+-- Wishlist Table
 CREATE TABLE IF NOT EXISTS public.wishlist
 (
-    wishlistid integer NOT NULL,
-    userid integer,
-    datecreated date,
-    CONSTRAINT wishlist_pkey PRIMARY KEY (wishlistid)
+    wishlistid INTEGER PRIMARY KEY,
+    userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
+    datecreated DATE NOT NULL
 );
 
+-- Wishlist Items Table
 CREATE TABLE IF NOT EXISTS public.wishlistitem
 (
-    wishlistitemid integer NOT NULL,
-    wishlistid integer,
-    bookid integer,
-    dateadded date,
-    CONSTRAINT wishlistitem_pkey PRIMARY KEY (wishlistitemid)
+    wishlistitemid INTEGER PRIMARY KEY,
+    wishlistid INTEGER REFERENCES public.wishlist(wishlistid) NOT NULL,
+    bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
+    dateadded DATE NOT NULL
 );
 
-ALTER TABLE IF EXISTS public.authorbook
-    ADD CONSTRAINT authorbook_authorid_fkey FOREIGN KEY (authorid)
-    REFERENCES public.author (authorid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+-- Book Tags Table
+CREATE TABLE IF NOT EXISTS public.tag
+(
+    tagid INTEGER PRIMARY KEY,
+    tagname VARCHAR(100) UNIQUE NOT NULL
+);
 
+-- Book-Tag Relationships Table
+CREATE TABLE IF NOT EXISTS public.booktag
+(
+    booktagid INTEGER PRIMARY KEY,
+    bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
+    tagid INTEGER REFERENCES public.tag(tagid) NOT NULL
+);
 
-ALTER TABLE IF EXISTS public.authorbook
-    ADD CONSTRAINT authorbook_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+-- User Activities Table
+CREATE TABLE IF NOT EXISTS public.useractivity
+(
+    activityid INTEGER PRIMARY KEY,
+    userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
+    activitytype VARCHAR(100) NOT NULL,
+    activitydate TIMESTAMP NOT NULL
+);
 
+-- User Following Table
+CREATE TABLE IF NOT EXISTS public.userfollowing
+(
+    followingid INTEGER PRIMARY KEY,
+    followerid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
+    followdate DATE NOT NULL
+);
 
-ALTER TABLE IF EXISTS public.book
-    ADD CONSTRAINT book_publisherid_fkey FOREIGN KEY (publisherid)
-    REFERENCES public.publisher (publisherid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+-- Notifications Table
+CREATE TABLE IF NOT EXISTS public.notification
+(
+    notificationid INTEGER PRIMARY KEY,
+    userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
+    message TEXT NOT NULL,
+    datecreated TIMESTAMP NOT NULL
+);
 
+-- Stock Table
+CREATE TABLE IF NOT EXISTS public.stock
+(
+    stockid INTEGER PRIMARY KEY,
+    bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
+    quantityavailable INTEGER NOT NULL
+);
 
-ALTER TABLE IF EXISTS public.bookcategory
-    ADD CONSTRAINT bookcategory_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+-- VIEWS
 
+-- View for Books with their Authors
+CREATE VIEW public.books_authors AS
+SELECT b.bookid, b.title, a.name AS author
+FROM public.book b
+JOIN public.authorbook ab ON b.bookid = ab.bookid
+JOIN public.author a ON ab.authorid = a.authorid;
 
-ALTER TABLE IF EXISTS public.bookcategory
-    ADD CONSTRAINT bookcategory_categoryid_fkey FOREIGN KEY (categoryid)
-    REFERENCES public.category (categoryid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+-- View for Books with their Categories
+CREATE VIEW public.books_categories AS
+SELECT b.bookid, b.title, c.categoryname
+FROM public.book b
+JOIN public.bookcategory bc ON b.bookid = bc.bookid
+JOIN public.category c ON bc.categoryid = c.categoryid;
 
+-- View for Customer's Wishlist
+CREATE VIEW public.customer_wishlist AS
+SELECT ua.username, w.datecreated, b.title
+FROM public.useraccount ua
+JOIN public.wishlist w ON ua.userid = w.userid
+JOIN public.wishlistitem wi ON w.wishlistid = wi.wishlistid
+JOIN public.book b ON wi.bookid = b.bookid;
 
-ALTER TABLE IF EXISTS public.bought
-    ADD CONSTRAINT bought_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+-- View for Customer's Reviews
+CREATE VIEW public.customer_reviews AS
+SELECT ua.username, b.title, r.rating, r.comment, r.date
+FROM public.useraccount ua
+JOIN public.review r ON ua.userid = r.userid
+JOIN public.book b ON r.bookid = b.bookid;
 
+-- FOREIGN KEYS
+-- Foreign keys have already been defined within the table creation statements
 
-ALTER TABLE IF EXISTS public.bought
-    ADD CONSTRAINT bought_customerid_fkey FOREIGN KEY (customerid)
-    REFERENCES public.customer (customerid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.orderhistory
-    ADD CONSTRAINT orderhistory_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.orderhistory
-    ADD CONSTRAINT orderhistory_userid_fkey FOREIGN KEY (userid)
-    REFERENCES public.useraccount (userid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.paymentmethod
-    ADD CONSTRAINT paymentmethod_userid_fkey FOREIGN KEY (userid)
-    REFERENCES public.useraccount (userid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.review
-    ADD CONSTRAINT review_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.review
-    ADD CONSTRAINT review_userid_fkey FOREIGN KEY (userid)
-    REFERENCES public.useraccount (userid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.stock
-    ADD CONSTRAINT stock_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.useraccount
-    ADD CONSTRAINT useraccount_customerid_fkey FOREIGN KEY (customerid)
-    REFERENCES public.customer (customerid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.wishlist
-    ADD CONSTRAINT wishlist_userid_fkey FOREIGN KEY (userid)
-    REFERENCES public.useraccount (userid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.wishlistitem
-    ADD CONSTRAINT wishlistitem_bookid_fkey FOREIGN KEY (bookid)
-    REFERENCES public.book (bookid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.wishlistitem
-    ADD CONSTRAINT wishlistitem_wishlistid_fkey FOREIGN KEY (wishlistid)
-    REFERENCES public.wishlist (wishlistid) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-
+-- END
 END;
-
