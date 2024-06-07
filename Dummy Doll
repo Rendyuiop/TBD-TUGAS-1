@@ -184,26 +184,28 @@ INSERT INTO public.useraccount (userid, customerid, username, email, passwordhas
 
 -- Reviews Table
 INSERT INTO public.review (reviewid, bookid, userid, rating, comment, date) VALUES
-    (1, 1, 1, 5, 'A masterpiece!', '2024-06-07'),
-    (2, 2, 2, 4, 'Lovely story!', '2024-06-07'),
-    (3, 3, 3, 5, 'Magical!', '2024-06-07'),
-    (4, 4, 4, 4, 'Classic!', '2024-06-07'),
-    (5, 5, 5, 5, 'Captivating!', '2024-06-07'),
-    (6, 6, 6, 5, 'Epic!', '2024-06-07'),
-    (7, 7, 7, 4, 'Thought-provoking!', '2024-06-07'),
-    (8, 8, 8, 5, 'Unforgettable!', '2024-06-07'),
-    (9, 9, 9, 4, 'Intense!', '2024-06-07'),
-    (10, 10, 10, 5, 'Unique!', '2024-06-07'),
-    (11, 11, 11, 4, 'Inspiring!', '2024-06-07'),
-    (12, 12, 12, 5, 'Adventure!', '2024-06-07'),
-    (13, 13, 13, 4, 'Romantic!', '2024-06-07'),
-    (14, 14, 14, 5, 'Thrilling!', '2024-06-07'),
-    (15, 15, 15, 4, 'Scary!', '2024-06-07'),
-    (16, 16, 16, 5, 'Deep!', '2024-06-07'),
-    (17, 17, 17, 4, 'Artistic!', '2024-06-07'),
-    (18, 18, 18, 5, 'Historical!', '2024-06-07'),
-    (19, 19, 19, 4, 'Inspirational!', '2024-06-07'),
-    (20, 20, 20, 5, 'Classic!', '2024-06-07');
+INSERT INTO public.review (reviewid, bookid, userid, rating, comment, date) VALUES
+    (1, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'A masterpiece!', '2024-06-07'),
+    (2, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Lovely story!', '2024-06-07'),
+    (3, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Magical!', '2024-06-07'),
+    (4, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Classic!', '2024-06-07'),
+    (5, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Captivating!', '2024-06-07'),
+    (6, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Epic!', '2024-06-07'),
+    (7, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Thought-provoking!', '2024-06-07'),
+    (8, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Unforgettable!', '2024-06-07'),
+    (9, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Intense!', '2024-06-07'),
+    (10, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Unique!', '2024-06-07'),
+    (11, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Inspiring!', '2024-06-07'),
+    (12, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Adventure!', '2024-06-07'),
+    (13, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Romantic!', '2024-06-07'),
+    (14, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Thrilling!', '2024-06-07'),
+    (15, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Scary!', '2024-06-07'),
+    (16, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Deep!', '2024-06-07'),
+    (17, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Artistic!', '2024-06-07'),
+    (18, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Historical!', '2024-06-07'),
+    (19, floor(random() * 20) + 1, floor(random() * 20) + 1, 4, 'Inspirational!', '2024-06-07'),
+    (20, floor(random() * 20) + 1, floor(random() * 20) + 1, 5, 'Classic!', '2024-06-07');
+
 
 -- Wishlist Table
 INSERT INTO public.wishlist (wishlistid, userid, datecreated) VALUES
