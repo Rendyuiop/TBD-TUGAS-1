@@ -1,4 +1,5 @@
-// get review, review by id, reviews by user, reviews by book
+
+// get review, review by id, reviews by user, reviews by book, and by rating
 const getReview =
   'SELECT * FROM public.review';
 
@@ -10,6 +11,9 @@ const getReviewsByUser =
 
 const getReviewsByBook =
   'SELECT * FROM public.review WHERE bookid = $1';
+
+const getReviewsByRate =
+  'SELECT * FROM public.review WHERE rating = $1';
 
 // add review
 const addReview =
@@ -28,6 +32,7 @@ module.exports = {
   getReviewById,
   getReviewsByUser,
   getReviewsByBook,
+  getReviewsByRate,
   addReview,
   updateReview,
   deleteReview
