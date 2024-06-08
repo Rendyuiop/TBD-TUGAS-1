@@ -4,7 +4,7 @@ BEGIN;
 -- Authors Table
 CREATE TABLE IF NOT EXISTS public.author
 (
-    authorid INTEGER PRIMARY KEY,
+    authorid SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     yearborn INTEGER NOT NULL,
     yeardied INTEGER,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.author
 -- Publishers Table
 CREATE TABLE IF NOT EXISTS public.publisher
 (
-    publisherid INTEGER PRIMARY KEY,
+    publisherid SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     country VARCHAR(100) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public.publisher
 -- Books Table
 CREATE TABLE IF NOT EXISTS public.book
 (
-    bookid INTEGER PRIMARY KEY,
+    bookid SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL, 	
     publicationyear INTEGER NOT NULL,
     pages INTEGER NOT NULL,
@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS public.book
 -- Book Categories Table
 CREATE TABLE IF NOT EXISTS public.category
 (
-    categoryid INTEGER PRIMARY KEY,
+    categoryid SERIAL PRIMARY KEY,
     categoryname VARCHAR(100) NOT NULL
 );
 
 -- Author-Book Relationships Table
 CREATE TABLE IF NOT EXISTS public.authorbook
 (
-    authorbookid INTEGER PRIMARY KEY,
+    authorbookid SERIAL PRIMARY KEY,
     authorid INTEGER REFERENCES public.author(authorid) NOT NULL,
     bookid INTEGER REFERENCES public.book(bookid) NOT NULL
 );
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS public.authorbook
 -- Book-Category Relationships Table
 CREATE TABLE IF NOT EXISTS public.bookcategory
 (
-    bookcategoryid INTEGER PRIMARY KEY,
+    bookcategoryid SERIAL PRIMARY KEY,
     bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
     categoryid INTEGER REFERENCES public.category(categoryid) NOT NULL
 );
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS public.bookcategory
 -- Customers Table
 CREATE TABLE IF NOT EXISTS public.customer
 (
-    customerid INTEGER PRIMARY KEY,
+    customerid SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     street VARCHAR(100),
     city VARCHAR(100),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public.customer
 -- User Accounts Table
 CREATE TABLE IF NOT EXISTS public.useraccount
 (
-    userid INTEGER PRIMARY KEY,
+    userid SERIAL PRIMARY KEY,
     customerid INTEGER REFERENCES public.customer(customerid) NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS public.useraccount
 -- Reviews Table
 CREATE TABLE IF NOT EXISTS public.review
 (
-    reviewid INTEGER PRIMARY KEY,
+    reviewid SERIAL PRIMARY KEY,
     bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
     userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
     rating INTEGER NOT NULL,
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS public.review
 -- Wishlist Table
 CREATE TABLE IF NOT EXISTS public.wishlist
 (
-    wishlistid INTEGER PRIMARY KEY,
+    wishlistid SERIAL PRIMARY KEY,
     userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
     datecreated DATE NOT NULL
 );
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS public.wishlist
 -- Wishlist Items Table
 CREATE TABLE IF NOT EXISTS public.wishlistitem
 (
-    wishlistitemid INTEGER PRIMARY KEY,
+    wishlistitemid SERIAL PRIMARY KEY,
     wishlistid INTEGER REFERENCES public.wishlist(wishlistid) NOT NULL,
     bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
     dateadded DATE NOT NULL
@@ -110,14 +110,14 @@ CREATE TABLE IF NOT EXISTS public.wishlistitem
 -- Book Tags Table
 CREATE TABLE IF NOT EXISTS public.tag
 (
-    tagid INTEGER PRIMARY KEY,
+    tagid SERIAL PRIMARY KEY,
     tagname VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- Book-Tag Relationships Table
 CREATE TABLE IF NOT EXISTS public.booktag
 (
-    booktagid INTEGER PRIMARY KEY,
+    booktagid SERIAL PRIMARY KEY,
     bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
     tagid INTEGER REFERENCES public.tag(tagid) NOT NULL
 );
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS public.booktag
 -- User Activities Table
 CREATE TABLE IF NOT EXISTS public.useractivity
 (
-    activityid INTEGER PRIMARY KEY,
+    activityid SERIAL PRIMARY KEY,
     userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
     activitytype VARCHAR(100) NOT NULL,
     activitydate TIMESTAMP NOT NULL
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS public.useractivity
 -- User Following Table
 CREATE TABLE IF NOT EXISTS public.userfollowing
 (
-    followingid INTEGER PRIMARY KEY,
+    followingid SERIAL PRIMARY KEY,
     followerid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
     followdate DATE NOT NULL
 );
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS public.userfollowing
 -- Notifications Table
 CREATE TABLE IF NOT EXISTS public.notification
 (
-    notificationid INTEGER PRIMARY KEY,
+    notificationid SERIAL PRIMARY KEY,
     userid INTEGER REFERENCES public.useraccount(userid) NOT NULL,
     message TEXT NOT NULL,
     datecreated TIMESTAMP NOT NULL
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS public.notification
 -- Stock Table
 CREATE TABLE IF NOT EXISTS public.stock
 (
-    stockid INTEGER PRIMARY KEY,
+    stockid SERIAL PRIMARY KEY,
     bookid INTEGER REFERENCES public.book(bookid) NOT NULL,
     quantityavailable INTEGER NOT NULL
 );
