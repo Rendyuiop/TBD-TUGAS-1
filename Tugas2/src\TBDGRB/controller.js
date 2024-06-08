@@ -85,7 +85,7 @@ const getReviewsByRate = (req, res) => {
 // Add a new review
 const addReview = (req, res) => {
   console.log('Received addReview request:', req.body);
-  
+
   const { bookid, userid, rating } = req.body;
 
   // Validate input data
@@ -177,7 +177,6 @@ const updateReview = (req, res) => {
     }
   );
 };
-
 
 // Delete a review
 const deleteReview = (req, res) => {
