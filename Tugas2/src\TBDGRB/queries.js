@@ -1,4 +1,3 @@
-
 // get review, review by id, reviews by user, reviews by book, and by rating
 const getReview =
   'SELECT * FROM public.review';
